@@ -62,11 +62,21 @@ jobs:
           sudo mv allure-2.24.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
       - name: Generate report
-        run: allure generate -c allure-results -o allure-repots
+        run: allure generate -c allure-results -o _site
       - name: Save allure report
         uses: actions/upload-actifact@v3
         with:
           name: allure-report
           path: allure-report
           retention-days: 1
-        
+  publish-report:
+    name: Report publication
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v3
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v2
+      - name: Deploy to Github Pages
+        id: deployment
+        uses: actions/deploy-pages@v1.2.9
