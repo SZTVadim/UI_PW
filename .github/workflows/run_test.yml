@@ -26,11 +26,11 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install system dependencies for Playwright
-        run: sudo playwright install-deps
-
       - name: Install Python dependencies
         run: pip install -r requirements.txt
+
+      - name: Install system dependencies for browsers
+        run: python -m playwright install-deps
 
       - name: Install Playwright browsers
         run: python -m playwright install
