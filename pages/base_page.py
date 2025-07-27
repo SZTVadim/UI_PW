@@ -19,7 +19,7 @@ class BasePage:
     @allure.step("Открываем страницу")
     def first_page_open(self):
         self.page.goto(f'{self.url_base}{self.page_url}')
-        self.close_cookie_banner()
+        # self.close_cookie_banner()
 
     @allure.step("Закрыть баннер куки")
     def close_cookie_banner(self):
