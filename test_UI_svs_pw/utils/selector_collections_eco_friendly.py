@@ -1,5 +1,0 @@
-sort_by = '.sorter-options'
-goods_list = '.products-grid'
-all_elements = '.item.product.product-item'
-element = '.price-wrapper '
-sort_element = '.sorter-action'
