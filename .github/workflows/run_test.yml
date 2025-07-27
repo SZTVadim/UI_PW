@@ -12,6 +12,7 @@ on:
           - smoke
           - regression
           - all
+          
 
 jobs:
   run-tests:
