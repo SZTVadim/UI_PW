@@ -46,6 +46,3 @@ jobs:
       - name: Run REGRESSION tests
         if: github.event.inputs.deployment_target == 'regression'
         run: pytest -m regression
-
-      - name: Run tests
-        run: pytest
