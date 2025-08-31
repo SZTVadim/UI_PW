@@ -44,7 +44,7 @@ jobs:
         if: github.event.inputs.deployment_target == 'all'
         run: pytest --alluredir=allure-results
         continue-on-error: true
-        
+
       - name: Run SMOKE tests
         if: github.event.inputs.deployment_target == 'smoke'
         run: pytest -m smoke --alluredir=allure-results
@@ -60,20 +60,24 @@ jobs:
         with:
           distribution: 'microsoft'
           java-version: '17'
+
       - name: Install Allure
         run: |
           wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
           tar -xvzf allure-2.24.0.tgz
           sudo mv allure-2.24.0 /opt/allure
           sudo ln -s /opt/allure/bin/allure /usr/bin/allure
-      - name: Generate report
+
+      - name: Generate Allure report
         run: allure generate -c allure-results -o _site
-      - name: Save allure report
+
+      - name: Save Allure report as artifact
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
-          path: allure-report
+          path: _site
           retention-days: 1
+
   publish-report:
     name: Report publication
     runs-on: ubuntu-latest
@@ -81,8 +85,15 @@ jobs:
     steps:
       - name: Download artifact
         uses: actions/download-artifact@v4
+        with:
+          name: allure-report
+          path: _site
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v2
-      - name: Deploy to Github Pages
+        with:
+          path: _site
+
+      - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1.2.9
