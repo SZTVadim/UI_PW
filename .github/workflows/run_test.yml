@@ -55,23 +55,37 @@ jobs:
         run: pytest -m regression --alluredir=allure-results
         continue-on-error: true
 
-      - name: Install Java
-        uses: actions/setup-java@v3
+      - name: Store allure results
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+          retention-days: 1
+  
+  generate-report:
+    runs-on: ubuntu-latest
+    needs: run-tests
+    name: Generate report
+    steps:
+      - uses: actions/setup-java@v3
         with:
           distribution: 'microsoft'
           java-version: '17'
 
-      - name: Install Allure
-        run: |
+      - run: |
           wget https://github.com/allure-framework/allure2/releases/download/2.24.0/allure-2.24.0.tgz
-          tar -xvzf allure-2.24.0.tgz
-          sudo mv allure-2.24.0 /opt/allure
-          sudo ln -s /opt/allure/bin/allure /usr/bin/allure
+          tar -zxvf allure-2.24.0.tgz -C /opt/
+          sudo ln -s /opt/allure-2.24.0/bin/allure /usr/bin/allure
 
-      - name: Generate Allure report
-        run: allure generate -c allure-results -o _site
+      - name: Download allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
 
-      - name: Save Allure report as artifact
+      - run: allure generate -c allure-results -o _site
+
+      - name: Store generated report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
@@ -79,21 +93,8 @@ jobs:
           retention-days: 1
 
   publish-report:
-    name: Report publication
     runs-on: ubuntu-latest
-    needs: run-tests
+    needs: generate-report
+    name: Report publication
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: allure-report
-          path: _site
-
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: _site
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1.2.9
+      - name
